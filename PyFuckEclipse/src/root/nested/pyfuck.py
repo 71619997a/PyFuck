@@ -166,3 +166,4 @@ while (loc<len(brainfuck)):
        
     loc+=1
 fatalError("Exited from reaching EOF")
+#testing
