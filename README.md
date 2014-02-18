@@ -4,7 +4,7 @@ PyFuck
 A brainfuck interpreter written in python, including some extra functions.
 
 TO COMPILE: cd to this directory, and
-python brainfuck.py 
+python pyfuck.py 
 
 SHORT USAGE STUFF:
 + increments current mem
@@ -20,6 +20,7 @@ NEW COMMANDS:
 
 _ prints the mem area around pointer
 : starts/ends a function
+@ ends program
 
 FUNCTIONS:
 also "subroutines". these are defined in subroutines.pbf in this format
