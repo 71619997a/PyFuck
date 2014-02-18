@@ -94,7 +94,11 @@ saved=brainfuck
 brainfuck=filter(lambda x: x in brainChars,brainfuck)
 for i in range(recursion):
     if(':' in brainfuck):
-        brainfuck=findAndReplace(brainfuck,srdict)
+        newBF=findAndReplace(brainfuck,srdict)
+        if(newBF==brainfuck):
+            start=brainfuck.find(':')
+            end=brainfuck.find(':',start+1)
+            fatalError("Function not found: "+brainfuck[start:end+1])
     else:
         break
 if(':' in brainfuck):
@@ -166,3 +170,4 @@ while (loc<len(brainfuck)):
        
     loc+=1
 fatalError("Exited from reaching EOF")
+
