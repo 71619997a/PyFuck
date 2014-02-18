@@ -4,7 +4,7 @@ PyFuck
 A brainfuck interpreter written in python, including some extra functions.
 
 TO COMPILE: cd to this directory, and
-python pyfuck.py 
+python PyFuckEclipse/src/root/nested/pyfuck.py 
 
 SHORT USAGE STUFF:
 + increments current mem
