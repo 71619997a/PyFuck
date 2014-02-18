@@ -61,7 +61,7 @@ def findAndReplace(strn,rdict):
     return pattern.sub(lambda x: rdict[x.group()], strn)
 
 
-brainChars=".,+-[]><:_"
+brainChars=".,+-[]><:_@"
 brainfuck=""
 depth=0
 mem=[0 for i in range(30000)]
@@ -160,7 +160,8 @@ while (loc<len(brainfuck)):
             print mem[bnd:ptr+ptrArea+1]
         if(DEBUG):
             print mem[-1],mem[0],mem[1]
-            
+    elif (brainfuck[loc]=='@'):
+	fatalError("Exited from reaching @")
        
     loc+=1
-    
+fatalError("Exited from reaching EOF")
