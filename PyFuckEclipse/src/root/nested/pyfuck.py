@@ -5,11 +5,14 @@ Created on Feb 9, 2014
 import sys    
 import re
 breakOnError=False
-ascii=False
-DEBUG=False
+ascii=True
+outAscii=True
+DEBUG=True
 dir="/Users/gbeharmarks/Desktop/PyFuck/"
 saved=""
 askSave=False
+inputs=""
+#print c.get("bob", "british") # To access the "british" attribute for bob directly
 def error(message):
     if(breakOnError):
         sys.exit(message)
@@ -17,8 +20,18 @@ def error(message):
         print message
 def fatalError(message):
     sys.exit(message)
-def findOpenBracket(bfuck,location,depth):
+def getDepth(bfuck,location):
+    bf=bfuck[:location]
+    depth=0
+    for i in range(len(bf)):
+        if(bf[i]=='['):
+            depth+=1
+        if(bf[i]==']'):
+            depth-=1
+    return depth
+def findOpenBracket(bfuck,location):
     bf=(bfuck[:location])[::-1]
+    depth=getDepth(bfuck,location)
     for i in range(len(bf)):
         if(bf[i]=='['):
             depth-=1
@@ -31,10 +44,15 @@ def findOpenBracket(bfuck,location,depth):
     return -1
         
 def findClosedBracket(bfuck,location):
-    bf=bfuck[location:]
-    if (DEBUG):
-        print "open at ",location, ", next at ",bf.find(']')+1
-    return bf.find(']')
+    depth=getDepth(bfuck,location)
+    start=location
+
+    if(getDepth(bfuck,bfuck.find("]",start+1))-1!=depth):
+        start=bfuck.find("]",start+1)
+        if (DEBUG):
+            print "non-closing bracket at "+str(start-1)
+    else:
+        return bfuck.find("]",start+1)
 def readSubroutines(subroutines):
     dicti={}
     begin=0
@@ -65,12 +83,13 @@ def onExit(message):
     if(askSave):
         save()
     sys.exit(message)
-brainChars=".,+-[]><:_@"
+    
+brainChars=".,+-[]><:_@^v"
 brainfuck=""
-depth=0
 mem=[0 for i in range(30000)]
 ptr=0
 loc=0
+stored=0
 ptrArea=7
 recursion=21
 routineFile=open(dir+"subroutines.pbf",'r')
@@ -108,27 +127,30 @@ if(':' in brainfuck):
     fatalError("Max recursion depth (" + str(recursion)+") reached: func "+brainfuck[start:end+1])
 print brainfuck
 while (loc<len(brainfuck)):
-    if(brainfuck[loc]=='.'):
-        if(ascii):
+    if(brainfuck[loc]=='.'): #print mem at ptr
+        if(outAscii):
             print str(unichr(mem[ptr]))
         else:
             print mem[ptr]
-    elif(brainfuck[loc]==','):
-        inp = input("Input: ")
+    elif(brainfuck[loc]==','): #input mem at ptr
+        if(inputs=="" and ascii):
+            inputs = raw_input("Input: ")
         
+            
         if(ascii):
-            mem[ptr]=ord(inp)
+            mem[ptr]=ord(inputs[0])
+            inputs=inputs[1:]
         else:
-            mem[ptr]=int(inp)
-    elif(brainfuck[loc]=='+'):
+            mem[ptr]=int(raw_input("Input: "))
+    elif(brainfuck[loc]=='+'): #
         mem[ptr]+=1
         if(DEBUG):
             print "add 1 to "+str(ptr)
     elif(brainfuck[loc]=='-'):
-        if(mem[ptr]>0 or ascii):
+        if(mem[ptr]>0 or not ascii):
             mem[ptr]-=1
         else:
-            error("At ",loc,": Negative numbers only permitted out of ASCII mode.")
+            error("At "+str(loc)+": Negative numbers only permitted out of ASCII mode.")
     elif(brainfuck[loc]=='>'):
         
         ptr+=1
@@ -144,14 +166,14 @@ while (loc<len(brainfuck)):
             #error("At ",loc,": Pointer is less than 0.")
             
     elif(brainfuck[loc]=='['):
-        depth+=1
+        
         if(mem[ptr]==0):
-            depth-=1
+            
             loc=findClosedBracket(brainfuck,loc)
     elif(brainfuck[loc]==']'):
         if(mem[ptr]!=0):
-            loc=findOpenBracket(brainfuck,loc,depth)-1
-            depth-=1
+            loc=findOpenBracket(brainfuck,loc)-1
+            
     elif(brainfuck[loc]=='_'):
         strel=" "
         for i in range(3*ptrArea):
@@ -166,8 +188,11 @@ while (loc<len(brainfuck)):
         if(DEBUG):
             print mem[-1],mem[0],mem[1]
     elif (brainfuck[loc]=='@'):
-        fatalError("Exited from reaching @")
-       
+        onExit ("Exited from reaching @")
+    elif (brainfuck[loc]=='$'):
+        stored=mem[ptr]
+    elif (brainfuck[loc]=='%'):
+        mem[ptr]=stored
     loc+=1
-fatalError("Exited from reaching EOF")
+onExit("Exited from reaching EOF")
 
