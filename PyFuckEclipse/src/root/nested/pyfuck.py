@@ -84,7 +84,7 @@ def onExit(message):
         save()
     sys.exit(message)
     
-brainChars=".,+-[]><:_@^v"
+brainChars=".,+-[]><:_@$%^v"
 brainfuck=""
 mem=[0 for i in range(30000)]
 ptr=0
@@ -193,6 +193,11 @@ while (loc<len(brainfuck)):
         stored=mem[ptr]
     elif (brainfuck[loc]=='%'):
         mem[ptr]=stored
+    elif (brainfuck[loc]=='v'):
+        loc=brainfuck.find('v',loc+1)
+    elif (brainfuck[loc]=='^'):
+        end=brainfuck.find('^',loc+1)
+        loc=brainfuck.find('v'+brainfuck[loc+1:end]+'v')+end-loc+3
     loc+=1
 onExit("Exited from reaching EOF")
 
