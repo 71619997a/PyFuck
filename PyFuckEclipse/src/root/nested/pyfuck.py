@@ -5,8 +5,8 @@ Created on Feb 9, 2014
 import sys    
 import re
 breakOnError=False
-ascii=True
-outAscii=True
+ascii=False
+outAscii=False
 DEBUG=True
 dir="/Users/gbeharmarks/Desktop/PyFuck/"
 saved=""
@@ -188,7 +188,7 @@ while (loc<len(brainfuck)):
         if(DEBUG):
             print mem[-1],mem[0],mem[1]
     elif (brainfuck[loc]=='@'):
-        onExit ("Exited from reaching @")
+        onExit("Exited from reaching @")
     elif (brainfuck[loc]=='$'):
         stored=mem[ptr]
     elif (brainfuck[loc]=='%'):
@@ -197,7 +197,7 @@ while (loc<len(brainfuck)):
         loc=brainfuck.find('v',loc+1)
     elif (brainfuck[loc]=='^'):
         end=brainfuck.find('^',loc+1)
-        loc=brainfuck.find('v'+brainfuck[loc+1:end]+'v')+end-loc+3
+        loc=brainfuck.find('v'+brainfuck[loc+1:end]+'v')+end-loc
     loc+=1
 onExit("Exited from reaching EOF")
 
